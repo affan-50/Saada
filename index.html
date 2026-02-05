@@ -13,20 +13,33 @@
             --neon-green: #39FF14;
             --electric-blue: #00D2FF;
             --saada-gold: #FFD700;
-            --true-chocolate: #3D231D; 
+            --true-chocolate: #2D1B18; 
             --glass-bg: rgba(255, 255, 255, 0.08);
             --glass-border: rgba(255, 255, 255, 0.2);
         }
 
         body, html {
             margin: 0; padding: 0; min-height: 100%;
-            /* Pure Chocolate Gradient Background */
-            background: radial-gradient(circle at center, #5D3A34 0%, #2D1B18 100%);
+            background: radial-gradient(circle at center, #4d2b24 0%, #1a0f0d 100%);
             font-family: 'Montserrat', sans-serif;
             color: #fff; overflow-x: hidden;
         }
 
-        /* Front-facing Hanging Decorations */
+        /* Twinkling Stars Background */
+        #star-container {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 0; pointer-events: none;
+        }
+        .star {
+            position: absolute; background: white; border-radius: 50%;
+            animation: twinkle var(--duration) infinite ease-in-out;
+        }
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+
+        /* Hanging Decorations */
         .hanging-container {
             position: fixed; top: 0; width: 100%; height: 0;
             display: flex; justify-content: space-between;
@@ -53,21 +66,17 @@
 
         .main-wrapper {
             display: flex; justify-content: center; align-items: center;
-            min-height: 100vh; padding: 60px 20px;
+            min-height: 100vh; padding: 60px 20px; position: relative; z-index: 10;
         }
 
         /* Glassmorphism Container */
         .container {
             width: 100%; max-width: 450px;
             background: var(--glass-bg); 
-            backdrop-filter: blur(25px);
-            -webkit-backdrop-filter: blur(25px);
-            border-radius: 50px;
-            padding: 45px 30px;
+            backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+            border-radius: 50px; padding: 45px 30px;
             border: 1px solid var(--glass-border);
-            text-align: center;
-            z-index: 10;
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+            text-align: center; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
         }
 
         .arabic-name {
@@ -87,7 +96,6 @@
             text-shadow: 0 0 10px var(--saada-gold);
         }
 
-        /* Corrected Arabic Verse */
         .ayah-text {
             font-family: 'Amiri', serif; font-size: 2.3rem; font-weight: bold;
             background: linear-gradient(90deg, var(--neon-green), var(--electric-blue));
@@ -96,16 +104,13 @@
             direction: rtl; margin: 20px 0;
         }
 
-        /* Stats Cards */
         .stat-card {
             background: rgba(255, 255, 255, 0.08);
             border: 1px solid var(--glass-border);
-            padding: 15px; border-radius: 20px;
-            margin: 20px 0;
+            padding: 15px; border-radius: 20px; margin: 20px 0;
         }
         .stat-value { font-size: 2.8rem; font-weight: 800; color: var(--electric-blue); display: block; }
 
-        /* Quran List Box */
         .quran-container {
             background: rgba(0, 0, 0, 0.2); border-radius: 30px;
             padding: 20px; margin: 25px 0; border: 1px solid var(--glass-border);
@@ -117,11 +122,21 @@
 
         .search-input {
             width: 75%; padding: 12px; border-radius: 12px; border: 1px solid var(--glass-border);
-            background: rgba(255, 255, 255, 0.05); color: white; text-align: center;
+            background: rgba(255, 255, 255, 0.05); color: white; text-align: center; margin-bottom: 20px;
         }
+
+        /* Secret Message Box */
+        #secret-content {
+            display: none; margin-top: 20px; text-align: left;
+            padding: 20px; border-radius: 20px; background: rgba(0,0,0,0.3);
+            border-left: 4px solid var(--neon-green); animation: slideIn 0.8s ease;
+        }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
+
+    <div id="star-container"></div>
 
     <div class="hanging-container">
         <div class="decor-item"><div class="thread"></div><div class="icon">🌙</div></div>
@@ -132,11 +147,8 @@
     <div class="main-wrapper">
         <div class="container">
             <div class="arabic-name">سَعـادَة</div>
-            
             <img src="saada.jpg" alt="Saada" class="profile-img">
-            
             <div class="ramadan-greeting">𝓡𝓪𝓶𝓪𝓭𝓪𝓷 𝓜𝓾𝓫𝓪𝓻𝓪𝓴</div>
-            
             <div class="ayah-text">وَلَسَوْفَ يُعْطِيكَ رَبُّكَ فَتَرْضَىٰ</div>
 
             <div class="stat-card">
@@ -151,40 +163,60 @@
                 </div>
             </div>
 
-            <div style="margin: 25px 0;">
-                <input type="text" id="mSearch" class="search-input" placeholder="Search Nasheeds...">
-                <button onclick="playMusic()" style="background:var(--saada-gold); border:none; padding:12px; border-radius:12px; cursor:pointer;"><i class="fas fa-search"></i></button>
+            <input type="text" id="mSearch" class="search-input" placeholder="Search Nasheeds...">
+            <br>
+            <button onclick="unlockSecret()" style="background:var(--saada-gold); border:none; padding:12px 30px; border-radius:12px; color:#1a0f0d; font-weight:bold; cursor:pointer;">Unlock Secret Message</button>
+            
+            <div id="secret-content">
+                <strong style="color: var(--neon-green);">Dearest Saada,</strong><br><br>
+                All things from the beginning are conserved in your light. May this Ramadan bring you the peace you deserve and the joy that lasts forever. You are a light to everyone around you. ✨
             </div>
-
-            <button onclick="unlockSecret()" style="background:rgba(255,255,255,0.1); border:1px solid var(--glass-border); padding:12px 30px; border-radius:12px; color:white; font-weight:bold; cursor:pointer;">Unlock Secret</button>
-            <div id="secret-content" style="display:none; margin-top:15px; color: var(--neon-green); font-size: 0.95rem;">✨ "All things from the beginning are conserved in your light, Saada." ✨</div>
         </div>
     </div>
 
     <script>
+        // Star Generator
+        const stars = 100;
+        const container = document.getElementById('star-container');
+        for (let i = 0; i < stars; i++) {
+            const star = document.createElement('div');
+            star.className = 'star';
+            star.style.width = Math.random() * 3 + 'px';
+            star.style.height = star.style.width;
+            star.style.left = Math.random() * 100 + '%';
+            star.style.top = Math.random() * 100 + '%';
+            star.style.setProperty('--duration', Math.random() * 3 + 2 + 's');
+            container.appendChild(star);
+        }
+
+        // Countdown Logic (Google Synced)
         function updateCounter() {
             const now = new Date();
             const ramadan = new Date("February 17, 2026 00:00:00");
             const diff = ramadan - now;
-            const days = Math.ceil(diff / (1000 * 60 * 60 * 24));
-            document.getElementById('days-count').innerText = days;
+            document.getElementById('days-count').innerText = Math.ceil(diff / (1000 * 60 * 60 * 24));
         }
         setInterval(updateCounter, 1000);
         updateCounter();
 
+        // Quran Table
         const qTable = document.getElementById('qTable');
         for (let i = 1; i <= 30; i++) {
             qTable.innerHTML += `<tr><td>Day ${i}</td><td>Juz ${i}</td><td><button class="check-btn" onclick="this.innerHTML='<i class=\'fas fa-check-circle\'></i>'"><i class="far fa-circle"></i></button></td></tr>`;
         }
 
-        function playMusic() {
-            const q = document.getElementById('mSearch').value;
-            if(q) window.open("https://www.youtube.com/results?search_query=" + encodeURIComponent(q), "_blank");
-        }
-
+        // Confetti & Secret Reveal
         function unlockSecret() {
             document.getElementById('secret-content').style.display = 'block';
-            confetti({ particleCount: 150, spread: 70, colors: ['#FFD700', '#39FF14', '#00D2FF'] });
+            
+            const end = Date.now() + (3 * 1000);
+            const colors = ['#FFD700', '#39FF14', '#00D2FF'];
+
+            (function frame() {
+                confetti({ particleCount: 4, angle: 60, spread: 55, origin: { x: 0 }, colors: colors });
+                confetti({ particleCount: 4, angle: 120, spread: 55, origin: { x: 1 }, colors: colors });
+                if (Date.now() < end) requestAnimationFrame(frame);
+            }());
         }
     </script>
 </body>
