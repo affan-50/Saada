@@ -45,43 +45,59 @@
             text-align: center; box-shadow: 0 40px 100px rgba(0,0,0,0.8);
         }
 
+        /* Profile Image as the Main Feature */
+        .profile-img {
+            width: 180px; height: 180px; border-radius: 50%;
+            border: 5px solid var(--saada-gold); object-fit: cover;
+            margin: 0 auto 20px auto; display: block; 
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.4);
+            transition: 0.5s ease-in-out;
+        }
+        .profile-img:hover { transform: scale(1.05); border-color: var(--saada-blue); }
+
         .arabic-name {
-            font-family: 'Amiri', serif; font-size: 5.5rem;
-            margin: 0; color: white; text-shadow: 0 0 30px var(--saada-gold);
+            font-family: 'Amiri', serif; font-size: 4.5rem;
+            margin: 0; color: white; text-shadow: 0 0 20px var(--saada-gold);
             line-height: 1;
         }
 
         .ramadan-greeting {
-            font-size: 1.8rem;
-            margin: 15px 0 25px 0;
+            font-size: 1.8rem; margin: 10px 0 20px 0;
             color: var(--saada-gold);
-            letter-spacing: 1px;
         }
 
         .promise-verse {
-            margin: 20px 0; padding: 20px;
-            background: rgba(255, 215, 0, 0.05); border-radius: 30px;
-            border: 2px solid var(--saada-blue);
+            margin: 20px 0; padding: 15px;
+            background: rgba(255, 215, 0, 0.05); border-radius: 25px;
+            border: 1px solid var(--saada-blue);
         }
         .ayah-text {
-            font-family: 'Amiri', serif; font-size: 2.2rem; font-weight: bold;
-            background: linear-gradient(to right, var(--saada-gold), var(--saada-blue));
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            font-family: 'Amiri', serif; font-size: 1.8rem; font-weight: bold;
+            color: var(--soft-white);
+        }
+
+        /* Music Search Section */
+        .music-player-box {
+            margin: 25px 0; background: rgba(255,255,255,0.05);
+            padding: 20px; border-radius: 30px; border: 1px solid rgba(255,255,255,0.1);
+        }
+        .search-input {
+            width: 80%; background: #000; border: 1px solid var(--saada-blue);
+            padding: 12px; border-radius: 15px; color: white; margin-bottom: 10px;
+            text-align: center; outline: none;
+        }
+        .search-btn {
+            background: var(--saada-gold); border: none; padding: 10px 25px;
+            border-radius: 15px; cursor: pointer; font-weight: bold; color: #000;
         }
 
         .stat-card {
             background: rgba(244, 143, 177, 0.1);
-            padding: 25px; border-radius: 30px; border: 1px solid var(--saada-gold);
-            margin: 25px 0;
+            padding: 20px; border-radius: 30px; border: 1px solid var(--saada-gold);
+            margin: 20px 0;
         }
-        .stat-value { font-size: 3.5rem; font-weight: 800; color: var(--saada-gold); display: block; }
-        .stat-label { font-size: 0.8rem; letter-spacing: 2px; color: var(--saada-blue); text-transform: uppercase; }
-
-        .btn-telegram {
-            display: inline-flex; background: var(--saada-gold); color: var(--deep-base);
-            padding: 12px 40px; border-radius: 50px; text-decoration: none;
-            font-weight: bold; margin-top: 20px; transition: 0.3s;
-        }
+        .stat-value { font-size: 2.5rem; font-weight: 800; color: var(--saada-gold); display: block; }
+        .stat-label { font-size: 0.7rem; letter-spacing: 2px; color: var(--saada-blue); text-transform: uppercase; }
 
         #secret-content { display: none; margin-top: 25px; font-style: italic; color: var(--saada-rose); }
     </style>
@@ -90,12 +106,22 @@
 
     <div class="main-wrapper">
         <div class="container">
+            <img src="saada.jpg" alt="Saada" class="profile-img">
+            
             <div class="arabic-name">سَعـادَة</div>
             
-            <div class="ramadan-greeting">𝓽𝓱𝓲𝓼 𝓯𝓸𝓷𝓽 𝓡𝓪𝓶𝓪𝓭𝓪𝓷 𝓜𝓾𝓫𝓪𝓻𝓪𝓴</div>
+            <div class="ramadan-greeting">𝓡𝓪𝓶𝓪𝓭𝓪𝓷 𝓜𝓾𝓫𝓪𝓻𝓪𝓴</div>
 
             <div class="promise-verse">
                 <div class="ayah-text">وَلَسَوْفَ يُعْطِيكَ رَبُّكَ فَتَرْضَىٰ</div>
+            </div>
+
+            <div class="music-player-box">
+                <i class="fas fa-music" style="color: var(--saada-rose); margin-bottom: 10px;"></i>
+                <br>
+                <input type="text" id="mSearch" class="search-input" placeholder="Search Nasheeds for Saada...">
+                <br>
+                <button onclick="playMusic()" class="search-btn">Search YouTube</button>
             </div>
 
             <div class="stat-card">
@@ -103,16 +129,11 @@
                 <span class="stat-label">Days Until Ramadan</span>
             </div>
 
-            <a href="https://t.me/strong3505" target="_blank" class="btn-telegram">
-                <i class="fab fa-telegram-plane"></i> Message Saada
-            </a>
-
-            <div style="margin-top: 30px;">
-                <input type="password" id="passInput" style="background:none; border: 1px solid var(--saada-blue); color:white; padding:10px; border-radius:10px; text-align:center;" placeholder="Unlock Sanctuary">
-                <br>
-                <button onclick="checkPass()" style="background:var(--saada-blue); border:none; padding:10px 20px; border-radius:10px; font-weight:bold; cursor:pointer; margin-top:10px; color: black;">Enter</button>
+            <div style="margin-top: 20px;">
+                <input type="password" id="passInput" style="background:none; border: 1px solid var(--saada-blue); color:white; padding:10px; border-radius:10px; width: 60%;" placeholder="Secret Key">
+                <button onclick="checkPass()" style="background:none; border: 1px solid var(--saada-gold); color: var(--saada-gold); padding:10px; border-radius:10px; cursor:pointer; margin-left: 5px;">Unlock</button>
                 <div id="secret-content">
-                    ✨ "A blessed month for a blessed soul. Keep shining, Saada." ✨
+                    ✨ "Everything from the beginning is conserved in your light, Saada." ✨
                 </div>
             </div>
         </div>
@@ -130,6 +151,11 @@
             setTimeout(() => s.remove(), 7000);
         }
         setInterval(createSparkle, 300);
+
+        function playMusic() {
+            const q = document.getElementById('mSearch').value;
+            if(q) window.open("https://www.youtube.com/results?search_query=" + encodeURIComponent(q), "_blank");
+        }
 
         function checkPass() {
             if(document.getElementById('passInput').value.toLowerCase() === 'saada') {
