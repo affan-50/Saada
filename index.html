@@ -23,62 +23,40 @@
             color: #fff; overflow-x: hidden;
         }
 
-        /* Constantly Changing Hanging Decor */
+        /* Fixed & Visible Hanging Decor */
         .hanging-container {
             position: fixed; top: 0; width: 100%; height: 0;
             display: flex; justify-content: space-between;
-            padding: 0 40px; z-index: 999;
-            pointer-events: none;
+            padding: 0 40px; z-index: 999; pointer-events: none;
         }
-
         .decor-item {
             display: flex; flex-direction: column; align-items: center;
-            animation: swing 4s ease-in-out infinite alternate;
-            transform-origin: top;
+            animation: swing 4s ease-in-out infinite alternate; transform-origin: top;
         }
-
         .thread {
             width: 1.5px; height: 140px;
             background: linear-gradient(to bottom, transparent, var(--saada-gold));
             box-shadow: 0 0 5px var(--saada-gold);
         }
-
-        /* Shimmering / Pulsing Stars and Moons */
         .icon { 
-            font-size: 1.8rem; 
-            margin-top: -5px; 
+            font-size: 1.8rem; margin-top: -5px; 
             animation: shimmer 2.5s infinite ease-in-out alternate;
         }
-
-        @keyframes swing {
-            from { transform: rotate(-4deg); }
-            to { transform: rotate(4deg); }
-        }
-
+        @keyframes swing { from { transform: rotate(-4deg); } to { transform: rotate(4deg); } }
         @keyframes shimmer {
-            0% { 
-                transform: scale(0.9); 
-                filter: drop-shadow(0 0 5px var(--saada-gold)) brightness(0.8);
-                color: var(--saada-gold);
-            }
-            100% { 
-                transform: scale(1.15); 
-                filter: drop-shadow(0 0 20px var(--electric-blue)) brightness(1.2);
-                color: #fff;
-            }
+            0% { transform: scale(0.9); filter: drop-shadow(0 0 5px var(--saada-gold)); color: var(--saada-gold); }
+            100% { transform: scale(1.1); filter: drop-shadow(0 0 15px var(--electric-blue)); color: #fff; }
         }
 
-        /* Content */
         .main-wrapper {
             display: flex; justify-content: center; align-items: center;
             min-height: 100vh; padding: 60px 20px;
         }
-
         .container {
             width: 100%; max-width: 450px;
-            background: rgba(0, 0, 0, 0.6); 
-            backdrop-filter: blur(20px); border-radius: 60px;
-            padding: 40px 25px; border: 1px solid rgba(255, 215, 0, 0.15);
+            background: rgba(0, 0, 0, 0.7); 
+            backdrop-filter: blur(25px); border-radius: 60px;
+            padding: 40px 25px; border: 1px solid rgba(255, 215, 0, 0.2);
             text-align: center; z-index: 10;
         }
 
@@ -92,17 +70,15 @@
             width: 160px; height: 160px; border-radius: 50%;
             border: 3px solid var(--saada-gold); object-fit: cover;
             margin: 0 auto 20px auto; display: block;
-            box-shadow: 0 0 20px rgba(0,0,0,0.5);
         }
 
         .ramadan-greeting {
             font-size: 2.1rem; margin: 15px 0; color: var(--saada-gold);
-            animation: night-flicker 5s infinite;
+            animation: flicker 5s infinite;
         }
-
-        @keyframes night-flicker {
-            0%, 18%, 22%, 25%, 53%, 57%, 100% { opacity: 1; text-shadow: 0 0 10px var(--saada-gold); }
-            20%, 24%, 55% { opacity: 0.3; text-shadow: none; }
+        @keyframes flicker {
+            0%, 100% { opacity: 1; text-shadow: 0 0 10px var(--saada-gold); }
+            50% { opacity: 0.3; text-shadow: none; }
         }
 
         .ayah-text {
@@ -112,68 +88,102 @@
             filter: drop-shadow(0 0 10px rgba(57, 255, 20, 0.4));
         }
 
+        /* Stats & Real-Time Countdown */
+        .stats-grid { display: flex; gap: 10px; margin: 25px 0; }
         .stat-card {
-            border: 2px solid var(--saada-gold); padding: 20px; border-radius: 30px;
-            margin: 25px 0; background: rgba(0,0,0,0.4);
+            flex: 1; background: rgba(255, 215, 0, 0.1);
+            padding: 15px 5px; border-radius: 20px; border: 1px solid var(--saada-gold);
         }
-        .stat-value { font-size: 3.5rem; color: var(--saada-gold); display: block; font-weight: bold; }
+        .stat-value { font-size: 2rem; font-weight: 800; color: var(--electric-blue); display: block; }
+        .stat-label { font-size: 0.6rem; text-transform: uppercase; color: #aaa; }
+
+        /* Quran 1x Plan */
+        .quran-container {
+            background: rgba(0, 0, 0, 0.4); border-radius: 30px;
+            padding: 20px; margin: 25px 0; border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .quran-scroll { max-height: 180px; overflow-y: auto; scrollbar-width: thin; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+        td { padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .check-btn { background: none; border: none; color: var(--neon-green); cursor: pointer; }
+
+        .search-bar {
+            width: 70%; padding: 12px; border-radius: 12px; border: 1px solid var(--electric-blue);
+            background: transparent; color: white; text-align: center;
+        }
     </style>
 </head>
 <body>
 
     <div class="hanging-container">
-        <div class="decor-item" style="animation-delay: 0.2s;">
-            <div class="thread"></div><div class="icon">🌙</div>
-        </div>
-        <div class="decor-item" style="animation-delay: 1.1s;">
-            <div class="thread" style="height: 190px;"></div><div class="icon" style="animation-delay: 0.5s;">⭐</div>
-        </div>
-        <div class="decor-item" style="animation-delay: 0.6s;">
-            <div class="thread" style="height: 160px;"></div><div class="icon" style="animation-delay: 0.8s;">🌙</div>
-        </div>
-        <div class="decor-item" style="animation-delay: 1.5s;">
-            <div class="thread"></div><div class="icon" style="animation-delay: 0.3s;">⭐</div>
-        </div>
+        <div class="decor-item"><div class="thread"></div><div class="icon">🌙</div></div>
+        <div class="decor-item" style="animation-delay: 0.5s;"><div class="thread" style="height: 190px;"></div><div class="icon">⭐</div></div>
+        <div class="decor-item" style="animation-delay: 1.2s;"><div class="thread"></div><div class="icon">🌙</div></div>
     </div>
 
     <div class="main-wrapper">
         <div class="container">
             <div class="arabic-name">سَعـادَة</div>
-
             <img src="saada.jpg" alt="Saada" class="profile-img">
-            
             <div class="ramadan-greeting">𝓡𝓪𝓶𝓪𝓭𝓪𝓷 𝓜𝓾𝓫𝓪𝓻𝓪𝓴</div>
-
             <div class="ayah-text">وَلَسَوْفَ يُعْطِيكَ رَبُّكَ فَتَرْضَىٰ</div>
 
-            <div class="stat-card">
-                <span class="stat-value" id="count-box">--</span>
-                <div style="font-size: 0.8rem; letter-spacing: 2px; color: var(--electric-blue);">DAYS UNTIL RAMADAN</div>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <span id="days-live" class="stat-value">--</span>
+                    <span class="stat-label">Days to Go</span>
+                </div>
+                <div class="stat-card">
+                    <span id="ramadan-status" class="stat-value">--</span>
+                    <span class="stat-label">Current Status</span>
+                </div>
+            </div>
+
+            <div class="quran-container">
+                <div style="color: var(--saada-gold); font-weight: bold; margin-bottom: 10px; font-size: 0.9rem;">📖 1x Khatm Plan (Juz per Day)</div>
+                <div class="quran-scroll">
+                    <table id="quran-list"></table>
+                </div>
             </div>
 
             <div style="margin: 20px 0;">
-                <input type="text" id="mSearch" style="width:70%; padding:12px; border-radius:12px; border:1px solid var(--electric-blue); background:none; color:white; text-align:center;" placeholder="Search Nasheeds...">
-                <button onclick="playMusic()" style="background:var(--saada-gold); border:none; padding:12px; border-radius:12px; cursor:pointer; margin-left:5px;"><i class="fas fa-search"></i></button>
+                <input type="text" id="mSearch" class="search-bar" placeholder="Nasheed Search...">
+                <button onclick="playMusic()" style="background:var(--saada-gold); border:none; padding:12px; border-radius:12px; cursor:pointer;"><i class="fas fa-search"></i></button>
             </div>
             
             <div style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px;">
                 <input type="password" id="passInput" placeholder="Secret Key" style="background:none; border:1px solid #444; color:#fff; padding:10px; border-radius:10px; width: 45%;">
                 <button onclick="checkPass()" style="background:none; border:1px solid var(--neon-green); color:var(--neon-green); padding:10px; border-radius:10px; cursor:pointer;">Unlock</button>
-                <div id="secret-content" style="display:none; margin-top:15px; color: var(--neon-green); font-size: 0.95rem;">✨ "All things from the beginning are conserved in your light, Saada." ✨</div>
+                <div id="secret-content" style="display:none; margin-top:15px; color: var(--neon-green); font-size: 0.9rem;">✨ "Everything from the beginning is conserved in your light, Saada." ✨</div>
             </div>
         </div>
     </div>
 
     <script>
-        // Automatic Ramadan Countdown (Google Synced)
-        function updateCounter() {
-            const target = new Date("February 17, 2026 00:00:00").getTime();
-            const now = new Date().getTime();
-            const gap = target - now;
-            const days = Math.ceil(gap / (1000 * 60 * 60 * 24));
-            document.getElementById("count-box").innerText = days > 0 ? days : "Mubarak!";
+        // LIVE GOOGLE-TIME CONNECTION
+        function runRealTimeClock() {
+            const now = new Date();
+            const ramadan = new Date("February 17, 2026 00:00:00");
+            const diff = ramadan - now;
+            
+            const days = Math.ceil(diff / (1000 * 60 * 60 * 24));
+            
+            document.getElementById('days-live').innerText = days > 0 ? days : 0;
+            document.getElementById('ramadan-status').innerText = days > 0 ? "Preparing" : "Mubarak!";
         }
-        updateCounter();
+        setInterval(runRealTimeClock, 1000);
+        runRealTimeClock();
+
+        // QURAN 1X PLAN GENERATOR
+        const list = document.getElementById('quran-list');
+        for (let i = 1; i <= 30; i++) {
+            list.innerHTML += `<tr><td>Day ${i}</td><td>Juz ${i}</td><td><button class="check-btn" onclick="markDone(this)"><i class="far fa-circle"></i></button></td></tr>`;
+        }
+
+        function markDone(btn) {
+            btn.innerHTML = '<i class="fas fa-check-circle"></i>';
+            confetti({ particleCount: 20, spread: 50, colors: ['#39FF14', '#FFD700'] });
+        }
 
         function playMusic() {
             const q = document.getElementById('mSearch').value;
@@ -183,7 +193,7 @@
         function checkPass() {
             if(document.getElementById('passInput').value.toLowerCase() === 'saada') {
                 document.getElementById('secret-content').style.display = 'block';
-                confetti({ particleCount: 150, spread: 80, colors: ['#FFD700', '#39FF14', '#00D2FF'] });
+                confetti({ particleCount: 150, spread: 80 });
             }
         }
     </script>
