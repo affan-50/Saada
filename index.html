@@ -132,9 +132,30 @@
             border-left: 4px solid var(--neon-green); animation: slideIn 0.8s ease;
         }
         @keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Audio Control Button */
+        .audio-control {
+            position: fixed; bottom: 30px; right: 30px;
+            width: 55px; height: 55px; border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1); border: 1px solid var(--glass-border);
+            backdrop-filter: blur(10px); color: var(--saada-gold);
+            display: flex; justify-content: center; align-items: center;
+            cursor: pointer; z-index: 1000; transition: 0.3s;
+            box-shadow: 0 0 20px rgba(0,0,0,0.4);
+        }
+        .audio-control.playing { animation: pulse 2s infinite; }
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.4); }
+            70% { box-shadow: 0 0 0 15px rgba(255, 215, 0, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0); }
+        }
     </style>
 </head>
 <body>
+
+    <audio id="bg-audio" loop>
+        <source src="ramadan.mp3" type="audio/mpeg">
+    </audio>
 
     <div id="star-container"></div>
 
@@ -165,13 +186,17 @@
 
             <input type="text" id="mSearch" class="search-input" placeholder="Search Nasheeds...">
             <br>
-            <button onclick="unlockSecret()" style="background:var(--saada-gold); border:none; padding:12px 30px; border-radius:12px; color:#1a0f0d; font-weight:bold; cursor:pointer;">Unlock Secret Message</button>
+            <button onclick="unlockSecret()" style="background:var(--saada-gold); border:none; padding:12px 30px; border-radius:12px; color:#1a0f0d; font-weight:bold; cursor:pointer; margin-bottom: 10px;">Unlock Secret Message</button>
             
             <div id="secret-content">
                 <strong style="color: var(--neon-green);">Dearest Saada,</strong><br><br>
                 All things from the beginning are conserved in your light. May this Ramadan bring you the peace you deserve and the joy that lasts forever. You are a light to everyone around you. ✨
             </div>
         </div>
+    </div>
+
+    <div class="audio-control" id="audioBtn" onclick="toggleAudio()">
+        <i class="fas fa-play"></i>
     </div>
 
     <script>
@@ -189,12 +214,12 @@
             container.appendChild(star);
         }
 
-        // Countdown Logic (Google Synced)
+        // Countdown Logic
         function updateCounter() {
             const now = new Date();
             const ramadan = new Date("February 17, 2026 00:00:00");
             const diff = ramadan - now;
-            document.getElementById('days-count').innerText = Math.ceil(diff / (1000 * 60 * 60 * 24));
+            document.getElementById('days-count').innerText = Math.max(0, Math.ceil(diff / (1000 * 60 * 60 * 24)));
         }
         setInterval(updateCounter, 1000);
         updateCounter();
@@ -205,10 +230,31 @@
             qTable.innerHTML += `<tr><td>Day ${i}</td><td>Juz ${i}</td><td><button class="check-btn" onclick="this.innerHTML='<i class=\'fas fa-check-circle\'></i>'"><i class="far fa-circle"></i></button></td></tr>`;
         }
 
+        // Audio Logic
+        const audio = document.getElementById('bg-audio');
+        const audioBtn = document.getElementById('audioBtn');
+        let isPlaying = false;
+
+        function toggleAudio() {
+            if (isPlaying) {
+                audio.pause();
+                audioBtn.classList.remove('playing');
+                audioBtn.innerHTML = '<i class="fas fa-play"></i>';
+            } else {
+                audio.play().catch(e => console.log("Audio play blocked until user interaction."));
+                audioBtn.classList.add('playing');
+                audioBtn.innerHTML = '<i class="fas fa-pause"></i>';
+            }
+            isPlaying = !isPlaying;
+        }
+
         // Confetti & Secret Reveal
         function unlockSecret() {
             document.getElementById('secret-content').style.display = 'block';
             
+            // Auto-play audio when secret is unlocked
+            if (!isPlaying) toggleAudio();
+
             const end = Date.now() + (3 * 1000);
             const colors = ['#FFD700', '#39FF14', '#00D2FF'];
 
