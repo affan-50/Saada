@@ -1,269 +1,443 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en"
+    x-data="{
+        dark: localStorage.getItem('theme') === 'dark',
+        mobileMenu: false
+    }"
+    x-bind:class="{ 'dark': dark }"
+    x-init="$watch('dark', value => localStorage.setItem('theme', value ? 'dark' : 'light'))">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Saada's Sanctuary</title>
-    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@700&family=Montserrat:wght@300;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
-    
+
+    <title>Affan | Developer</title>
+
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+
     <style>
-        :root {
-            --neon-green: #39FF14;
-            --electric-blue: #00D2FF;
-            --saada-gold: #FFD700;
-            --true-chocolate: #2D1B18; 
-            --glass-bg: rgba(255, 255, 255, 0.08);
-            --glass-border: rgba(255, 255, 255, 0.2);
+        html {
+            scroll-behavior: smooth;
         }
 
-        body, html {
-            margin: 0; padding: 0; min-height: 100%;
-            background: radial-gradient(circle at center, #4d2b24 0%, #1a0f0d 100%);
-            font-family: 'Montserrat', sans-serif;
-            color: #fff; overflow-x: hidden;
+        .grid-bg {
+            background-image:
+                linear-gradient(rgba(99,102,241,.08) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(99,102,241,.08) 1px, transparent 1px);
+            background-size: 50px 50px;
         }
 
-        /* Twinkling Stars Background */
-        #star-container {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 0; pointer-events: none;
-        }
-        .star {
-            position: absolute; background: white; border-radius: 50%;
-            animation: twinkle var(--duration) infinite ease-in-out;
-        }
-        @keyframes twinkle {
-            0%, 100% { opacity: 0.3; transform: scale(1); }
-            50% { opacity: 1; transform: scale(1.2); }
+        .dark .grid-bg {
+            background-image:
+                linear-gradient(rgba(129,140,248,.06) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(129,140,248,.06) 1px, transparent 1px);
         }
 
-        /* Hanging Decorations */
-        .hanging-container {
-            position: fixed; top: 0; width: 100%; height: 0;
-            display: flex; justify-content: space-between;
-            padding: 0 40px; z-index: 999; pointer-events: none;
-        }
-        .decor-item {
-            display: flex; flex-direction: column; align-items: center;
-            animation: swing 4s ease-in-out infinite alternate; transform-origin: top;
-        }
-        .thread {
-            width: 1.5px; height: 140px;
-            background: linear-gradient(to bottom, transparent, var(--saada-gold));
-            box-shadow: 0 0 5px var(--saada-gold);
-        }
-        .icon { 
-            font-size: 1.8rem; margin-top: -5px; 
-            animation: shimmer 2.5s infinite ease-in-out alternate;
-        }
-        @keyframes swing { from { transform: rotate(-4deg); } to { transform: rotate(4deg); } }
-        @keyframes shimmer {
-            0% { transform: scale(0.9); filter: drop-shadow(0 0 5px var(--saada-gold)); color: var(--saada-gold); }
-            100% { transform: scale(1.1); filter: drop-shadow(0 0 15px var(--electric-blue)); color: #fff; }
-        }
-
-        .main-wrapper {
-            display: flex; justify-content: center; align-items: center;
-            min-height: 100vh; padding: 60px 20px; position: relative; z-index: 10;
-        }
-
-        /* Glassmorphism Container */
-        .container {
-            width: 100%; max-width: 450px;
-            background: var(--glass-bg); 
-            backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
-            border-radius: 50px; padding: 45px 30px;
-            border: 1px solid var(--glass-border);
-            text-align: center; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
-        }
-
-        .arabic-name {
-            font-family: 'Amiri', serif; font-size: 5rem;
-            margin-bottom: 5px; color: #fff;
-            text-shadow: 0 0 25px var(--saada-gold);
-        }
-
-        .profile-img {
-            width: 155px; height: 155px; border-radius: 50%;
-            border: 4px solid rgba(255, 215, 0, 0.4);
-            object-fit: cover; margin: 10px auto 25px auto; display: block;
-        }
-
-        .ramadan-greeting {
-            font-size: 2.2rem; margin: 15px 0; color: var(--saada-gold);
-            text-shadow: 0 0 10px var(--saada-gold);
-        }
-
-        .ayah-text {
-            font-family: 'Amiri', serif; font-size: 2.3rem; font-weight: bold;
-            background: linear-gradient(90deg, var(--neon-green), var(--electric-blue));
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            filter: drop-shadow(0 0 10px rgba(57, 255, 20, 0.5));
-            direction: rtl; margin: 20px 0;
-        }
-
-        .stat-card {
-            background: rgba(255, 255, 255, 0.08);
-            border: 1px solid var(--glass-border);
-            padding: 15px; border-radius: 20px; margin: 20px 0;
-        }
-        .stat-value { font-size: 2.8rem; font-weight: 800; color: var(--electric-blue); display: block; }
-
-        .quran-container {
-            background: rgba(0, 0, 0, 0.2); border-radius: 30px;
-            padding: 20px; margin: 25px 0; border: 1px solid var(--glass-border);
-        }
-        .quran-scroll { max-height: 180px; overflow-y: auto; scrollbar-width: thin; }
-        table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
-        td { padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
-        .check-btn { background: none; border: none; color: var(--neon-green); cursor: pointer; font-size: 1.2rem; }
-
-        .search-input {
-            width: 75%; padding: 12px; border-radius: 12px; border: 1px solid var(--glass-border);
-            background: rgba(255, 255, 255, 0.05); color: white; text-align: center; margin-bottom: 20px;
-        }
-
-        /* Secret Message Box */
-        #secret-content {
-            display: none; margin-top: 20px; text-align: left;
-            padding: 20px; border-radius: 20px; background: rgba(0,0,0,0.3);
-            border-left: 4px solid var(--neon-green); animation: slideIn 0.8s ease;
-        }
-        @keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* Audio Control Button */
-        .audio-control {
-            position: fixed; bottom: 30px; right: 30px;
-            width: 55px; height: 55px; border-radius: 50%;
-            background: rgba(255, 255, 255, 0.1); border: 1px solid var(--glass-border);
-            backdrop-filter: blur(10px); color: var(--saada-gold);
-            display: flex; justify-content: center; align-items: center;
-            cursor: pointer; z-index: 1000; transition: 0.3s;
-            box-shadow: 0 0 20px rgba(0,0,0,0.4);
-        }
-        .audio-control.playing { animation: pulse 2s infinite; }
-        @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.4); }
-            70% { box-shadow: 0 0 0 15px rgba(255, 215, 0, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0); }
+        .glow {
+            filter: blur(80px);
         }
     </style>
 </head>
-<body>
 
-    <audio id="bg-audio" loop>
-        <source src="ramadan.mp3" type="audio/mpeg">
-    </audio>
+<body class="overflow-x-hidden bg-white text-slate-900 antialiased transition-colors duration-300 dark:bg-[#07070a] dark:text-white">
 
-    <div id="star-container"></div>
-
-    <div class="hanging-container">
-        <div class="decor-item"><div class="thread"></div><div class="icon">🌙</div></div>
-        <div class="decor-item" style="animation-delay: 0.5s;"><div class="thread" style="height: 190px;"></div><div class="icon">⭐</div></div>
-        <div class="decor-item" style="animation-delay: 1.2s;"><div class="thread"></div><div class="icon">🌙</div></div>
+    <!-- Ambient background -->
+    <div class="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
+        <div class="glow absolute -left-32 -top-32 h-96 w-96 rounded-full bg-indigo-500/20"></div>
+        <div class="glow absolute right-0 top-1/3 h-80 w-80 rounded-full bg-violet-500/10"></div>
+        <div class="grid-bg absolute inset-0 opacity-60"></div>
     </div>
 
-    <div class="main-wrapper">
-        <div class="container">
-            <div class="arabic-name">سَعـادَة</div>
-            <img src="saada.jpg" alt="Saada" class="profile-img">
-            <div class="ramadan-greeting">𝓡𝓪𝓶𝓪𝓭𝓪𝓷 𝓜𝓾𝓫𝓪𝓻𝓪𝓴</div>
-            <div class="ayah-text">وَلَسَوْفَ يُعْطِيكَ رَبُّكَ فَتَرْضَىٰ</div>
 
-            <div class="stat-card">
-                <span id="days-count" class="stat-value">--</span>
-                <span style="font-size: 0.75rem; color: #ddd; letter-spacing: 1.5px;">DAYS UNTIL RAMADAN</span>
+    <!-- HEADER -->
+    <header
+        class="fixed left-0 right-0 top-0 z-50 px-4 pt-4 sm:px-6"
+    >
+        <nav
+            class="mx-auto flex max-w-6xl items-center justify-between rounded-2xl border border-slate-200/70 bg-white/75 px-5 py-3 shadow-lg shadow-slate-900/5 backdrop-blur-xl dark:border-white/10 dark:bg-black/40 dark:shadow-black/20"
+        >
+
+            <!-- Logo -->
+            <a href="#home" class="group flex items-center gap-2">
+                <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-slate-950 text-sm font-bold text-white transition group-hover:scale-105 dark:bg-white dark:text-black">
+                    A
+                </span>
+
+                <span class="font-semibold tracking-tight">
+                    Affan<span class="text-indigo-500">.</span>
+                </span>
+            </a>
+
+
+            <!-- Desktop navigation -->
+            <div class="hidden items-center gap-8 md:flex">
+
+                <a href="#home"
+                   class="text-sm text-slate-600 transition hover:text-indigo-600 dark:text-slate-300 dark:hover:text-white">
+                    Home
+                </a>
+
+                <a href="#about"
+                   class="text-sm text-slate-600 transition hover:text-indigo-600 dark:text-slate-300 dark:hover:text-white">
+                    About
+                </a>
+
+                <a href="#projects"
+                   class="text-sm text-slate-600 transition hover:text-indigo-600 dark:text-slate-300 dark:hover:text-white">
+                    Projects
+                </a>
+
+                <a href="#contact"
+                   class="text-sm text-slate-600 transition hover:text-indigo-600 dark:text-slate-300 dark:hover:text-white">
+                    Contact
+                </a>
+
+                <button
+                    @click="dark = !dark"
+                    class="rounded-xl border border-slate-200 p-2.5 transition hover:bg-slate-100 dark:border-white/10 dark:hover:bg-white/10"
+                >
+                    <span x-show="!dark">☾</span>
+                    <span x-show="dark">☀</span>
+                </button>
+
             </div>
 
-            <div class="quran-container">
-                <div style="color: var(--saada-gold); font-weight: bold; margin-bottom: 12px;">📖 1x Khatm Plan (Juz per Day)</div>
-                <div class="quran-scroll">
-                    <table id="qTable"></table>
-                </div>
+
+            <!-- Mobile -->
+            <div class="flex items-center gap-2 md:hidden">
+
+                <button
+                    @click="dark = !dark"
+                    class="rounded-xl border border-slate-200 p-2 dark:border-white/10"
+                >
+                    <span x-show="!dark">☾</span>
+                    <span x-show="dark">☀</span>
+                </button>
+
+                <button
+                    @click="mobileMenu = !mobileMenu"
+                    class="rounded-xl border border-slate-200 p-2 dark:border-white/10"
+                >
+                    <span x-show="!mobileMenu">☰</span>
+                    <span x-show="mobileMenu">✕</span>
+                </button>
+
             </div>
 
-            <input type="text" id="mSearch" class="search-input" placeholder="Search Nasheeds...">
-            <br>
-            <button onclick="unlockSecret()" style="background:var(--saada-gold); border:none; padding:12px 30px; border-radius:12px; color:#1a0f0d; font-weight:bold; cursor:pointer; margin-bottom: 10px;">Unlock Secret Message</button>
-            
-            <div id="secret-content">
-                <strong style="color: var(--neon-green);">Dearest Saada,</strong><br><br>
-                All things from the beginning are conserved in your light. May this Ramadan bring you the peace you deserve and the joy that lasts forever. You are a light to everyone around you. ✨
+        </nav>
+
+
+        <!-- Mobile menu -->
+        <div
+            x-show="mobileMenu"
+            x-transition
+            @click.outside="mobileMenu = false"
+            class="mx-auto mt-2 max-w-6xl rounded-2xl border border-slate-200 bg-white/95 p-5 shadow-xl backdrop-blur-xl dark:border-white/10 dark:bg-[#0b0b0f]/95 md:hidden"
+        >
+            <div class="flex flex-col gap-5">
+
+                <a @click="mobileMenu = false" href="#home">Home</a>
+                <a @click="mobileMenu = false" href="#about">About</a>
+                <a @click="mobileMenu = false" href="#projects">Projects</a>
+                <a @click="mobileMenu = false" href="#contact">Contact</a>
+
             </div>
         </div>
-    </div>
 
-    <div class="audio-control" id="audioBtn" onclick="toggleAudio()">
-        <i class="fas fa-play"></i>
-    </div>
+    </header>
 
-    <script>
-        // Star Generator
-        const stars = 100;
-        const container = document.getElementById('star-container');
-        for (let i = 0; i < stars; i++) {
-            const star = document.createElement('div');
-            star.className = 'star';
-            star.style.width = Math.random() * 3 + 'px';
-            star.style.height = star.style.width;
-            star.style.left = Math.random() * 100 + '%';
-            star.style.top = Math.random() * 100 + '%';
-            star.style.setProperty('--duration', Math.random() * 3 + 2 + 's');
-            container.appendChild(star);
-        }
 
-        // Countdown Logic
-        function updateCounter() {
-            const now = new Date();
-            const ramadan = new Date("February 17, 2026 00:00:00");
-            const diff = ramadan - now;
-            document.getElementById('days-count').innerText = Math.max(0, Math.ceil(diff / (1000 * 60 * 60 * 24)));
-        }
-        setInterval(updateCounter, 1000);
-        updateCounter();
+    <!-- HERO -->
+    <main id="home">
 
-        // Quran Table
-        const qTable = document.getElementById('qTable');
-        for (let i = 1; i <= 30; i++) {
-            qTable.innerHTML += `<tr><td>Day ${i}</td><td>Juz ${i}</td><td><button class="check-btn" onclick="this.innerHTML='<i class=\'fas fa-check-circle\'></i>'"><i class="far fa-circle"></i></button></td></tr>`;
-        }
+        <section class="relative flex min-h-screen items-center px-6 pb-20 pt-32">
 
-        // Audio Logic
-        const audio = document.getElementById('bg-audio');
-        const audioBtn = document.getElementById('audioBtn');
-        let isPlaying = false;
+            <div class="mx-auto w-full max-w-6xl">
 
-        function toggleAudio() {
-            if (isPlaying) {
-                audio.pause();
-                audioBtn.classList.remove('playing');
-                audioBtn.innerHTML = '<i class="fas fa-play"></i>';
-            } else {
-                audio.play().catch(e => console.log("Audio play blocked until user interaction."));
-                audioBtn.classList.add('playing');
-                audioBtn.innerHTML = '<i class="fas fa-pause"></i>';
-            }
-            isPlaying = !isPlaying;
-        }
+                <div class="max-w-4xl">
 
-        // Confetti & Secret Reveal
-        function unlockSecret() {
-            document.getElementById('secret-content').style.display = 'block';
-            
-            // Auto-play audio when secret is unlocked
-            if (!isPlaying) toggleAudio();
+                    <!-- Status -->
+                    <div class="mb-7 inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white/70 px-4 py-2 text-sm shadow-sm backdrop-blur dark:border-white/10 dark:bg-white/5">
+                        <span class="relative flex h-2 w-2">
+                            <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75"></span>
+                            <span class="relative inline-flex h-2 w-2 rounded-full bg-emerald-500"></span>
+                        </span>
 
-            const end = Date.now() + (3 * 1000);
-            const colors = ['#FFD700', '#39FF14', '#00D2FF'];
+                        Available for new projects
+                    </div>
 
-            (function frame() {
-                confetti({ particleCount: 4, angle: 60, spread: 55, origin: { x: 0 }, colors: colors });
-                confetti({ particleCount: 4, angle: 120, spread: 55, origin: { x: 1 }, colors: colors });
-                if (Date.now() < end) requestAnimationFrame(frame);
-            }());
-        }
-    </script>
+
+                    <p class="mb-4 font-mono text-sm font-medium text-indigo-600 dark:text-indigo-400">
+                        Hello, I'm Affan 👋
+                    </p>
+
+
+                    <h1 class="text-5xl font-bold leading-[1.05] tracking-tight sm:text-6xl lg:text-8xl">
+                        I build
+                        <span class="bg-gradient-to-r from-indigo-500 via-violet-500 to-fuchsia-500 bg-clip-text text-transparent">
+                            digital experiences.
+                        </span>
+                    </h1>
+
+
+                    <p class="mt-7 max-w-2xl text-lg leading-8 text-slate-600 dark:text-slate-400 sm:text-xl">
+                        A developer focused on building elegant, fast and
+                        meaningful products with modern web technologies.
+                    </p>
+
+
+                    <div class="mt-9 flex flex-wrap gap-4">
+
+                        <a
+                            href="#projects"
+                            class="group rounded-xl bg-slate-950 px-6 py-3.5 font-medium text-white shadow-xl shadow-slate-950/10 transition hover:-translate-y-0.5 hover:shadow-2xl dark:bg-white dark:text-black"
+                        >
+                            View my work
+                            <span class="ml-2 transition group-hover:translate-x-1">→</span>
+                        </a>
+
+                        <a
+                            href="#contact"
+                            class="rounded-xl border border-slate-300 bg-white/60 px-6 py-3.5 font-medium backdrop-blur transition hover:bg-slate-100 dark:border-white/10 dark:bg-white/5 dark:hover:bg-white/10"
+                        >
+                            Let's talk
+                        </a>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Tech stack -->
+                <div class="mt-20 border-t border-slate-200 pt-8 dark:border-white/10">
+
+                    <p class="mb-5 text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">
+                        Technologies I work with
+                    </p>
+
+                    <div class="flex flex-wrap gap-3">
+
+                        @foreach(['Laravel', 'PHP', 'Blade', 'Alpine.js', 'Tailwind CSS', 'JavaScript', 'Git'] as $tech)
+
+                            <span class="rounded-lg border border-slate-200 bg-white/60 px-4 py-2 text-sm text-slate-600 backdrop-blur dark:border-white/10 dark:bg-white/5 dark:text-slate-300">
+                                {{ $tech }}
+                            </span>
+
+                        @endforeach
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ABOUT -->
+        <section id="about" class="px-6 py-28">
+
+            <div class="mx-auto grid max-w-6xl gap-16 lg:grid-cols-2 lg:items-center">
+
+                <div>
+
+                    <p class="font-mono text-sm text-indigo-500">
+                        01 / About
+                    </p>
+
+                    <h2 class="mt-3 text-4xl font-bold tracking-tight sm:text-5xl">
+                        Turning ideas into
+                        <span class="text-slate-400 dark:text-slate-600">
+                            reality.
+                        </span>
+                    </h2>
+
+                </div>
+
+
+                <div>
+
+                    <p class="text-lg leading-8 text-slate-600 dark:text-slate-400">
+                        I enjoy taking ideas from a rough concept and turning
+                        them into polished, functional products. I care about
+                        clean interfaces, thoughtful details and code that
+                        remains easy to understand.
+                    </p>
+
+                    <p class="mt-5 text-lg leading-8 text-slate-600 dark:text-slate-400">
+                        I'm constantly learning, experimenting and looking for
+                        better ways to build things.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- PROJECTS -->
+        <section id="projects" class="px-6 py-28">
+
+            <div class="mx-auto max-w-6xl">
+
+                <div class="flex flex-col justify-between gap-5 sm:flex-row sm:items-end">
+
+                    <div>
+
+                        <p class="font-mono text-sm text-indigo-500">
+                            02 / Projects
+                        </p>
+
+                        <h2 class="mt-3 text-4xl font-bold tracking-tight sm:text-5xl">
+                            Selected work
+                        </h2>
+
+                    </div>
+
+                    <p class="max-w-sm text-sm leading-6 text-slate-500">
+                        A few things I've built while learning, experimenting
+                        and solving problems.
+                    </p>
+
+                </div>
+
+
+                <div class="mt-12 grid gap-6 md:grid-cols-2">
+
+                    @foreach([
+                        [
+                            'number' => '01',
+                            'title' => 'Project One',
+                            'description' => 'A modern Laravel application focused on performance, usability and a clean developer experience.',
+                            'tags' => ['Laravel', 'Blade', 'Tailwind']
+                        ],
+                        [
+                            'number' => '02',
+                            'title' => 'Project Two',
+                            'description' => 'A responsive web experience designed around simplicity, accessibility and thoughtful interaction.',
+                            'tags' => ['PHP', 'Alpine.js', 'JavaScript']
+                        ],
+                        [
+                            'number' => '03',
+                            'title' => 'Project Three',
+                            'description' => 'An experimental project exploring new technologies and creative approaches to solving problems.',
+                            'tags' => ['Laravel', 'API', 'JavaScript']
+                        ],
+                        [
+                            'number' => '04',
+                            'title' => 'Project Four',
+                            'description' => 'A small but focused product built from the ground up with an emphasis on speed and simplicity.',
+                            'tags' => ['PHP', 'MySQL', 'Tailwind']
+                        ]
+                    ] as $project)
+
+                        <article
+                            class="group relative overflow-hidden rounded-3xl border border-slate-200 bg-white p-7 transition duration-300 hover:-translate-y-1 hover:border-indigo-300 hover:shadow-2xl hover:shadow-indigo-500/10 dark:border-white/10 dark:bg-white/[0.03] dark:hover:border-indigo-500/40"
+                        >
+
+                            <div class="flex items-start justify-between">
+
+                                <span class="font-mono text-sm text-slate-400">
+                                    {{ $project['number'] }}
+                                </span>
+
+                                <span class="text-2xl text-slate-300 transition group-hover:translate-x-1 group-hover:-translate-y-1 group-hover:text-indigo-500">
+                                    ↗
+                                </span>
+
+                            </div>
+
+
+                            <h3 class="mt-16 text-2xl font-semibold">
+                                {{ $project['title'] }}
+                            </h3>
+
+
+                            <p class="mt-4 leading-7 text-slate-600 dark:text-slate-400">
+                                {{ $project['description'] }}
+                            </p>
+
+
+                            <div class="mt-7 flex flex-wrap gap-2">
+
+                                @foreach($project['tags'] as $tag)
+
+                                    <span class="rounded-md bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600 dark:bg-white/5 dark:text-slate-400">
+                                        {{ $tag }}
+                                    </span>
+
+                                @endforeach
+
+                            </div>
+
+                        </article>
+
+                    @endforeach
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- CTA -->
+        <section id="contact" class="px-6 py-32">
+
+            <div class="mx-auto max-w-6xl">
+
+                <div class="relative overflow-hidden rounded-3xl border border-indigo-200 bg-gradient-to-br from-indigo-50 via-white to-violet-50 p-10 sm:p-16 dark:border-white/10 dark:from-indigo-950/40 dark:via-[#0b0b0f] dark:to-violet-950/30">
+
+                    <div class="relative z-10 max-w-2xl">
+
+                        <p class="font-mono text-sm text-indigo-500">
+                            03 / Contact
+                        </p>
+
+                        <h2 class="mt-4 text-4xl font-bold tracking-tight sm:text-6xl">
+                            Have an idea?
+                        </h2>
+
+                        <p class="mt-5 text-lg leading-8 text-slate-600 dark:text-slate-400">
+                            Let's turn it into something worth building.
+                        </p>
+
+                        <a
+                            href="mailto:hello@example.com"
+                            class="mt-8 inline-flex items-center rounded-xl bg-slate-950 px-6 py-3.5 font-medium text-white transition hover:-translate-y-0.5 dark:bg-white dark:text-black"
+                        >
+                            Get in touch
+                            <span class="ml-3">→</span>
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- FOOTER -->
+    <footer class="border-t border-slate-200 px-6 py-8 dark:border-white/10">
+
+        <div class="mx-auto flex max-w-6xl flex-col justify-between gap-4 text-sm text-slate-500 sm:flex-row">
+
+            <p>
+                © {{ date('Y') }} Affan. Built with Laravel.
+            </p>
+
+            <p>
+                Designed & developed with curiosity.
+            </p>
+
+        </div>
+
+    </footer>
+
 </body>
 </html>
